@@ -111,7 +111,9 @@ theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
 [node name="RequestOverview" parent="Panel/MarginContainer/VBoxContainer/HSplitContainer/RequestMenuContainer" instance=ExtResource("4_qy63d")]
+visible = false
 layout_mode = 2
 
 [connection signal="id_pressed" from="Panel/MarginContainer/VBoxContainer/MenuBar/File" to="Panel/MarginContainer/VBoxContainer/MenuBar" method="_on_file_id_pressed"]
 [connection signal="button_down" from="Panel/MarginContainer/VBoxContainer/HSplitContainer/VSplitContainer/RequestsList/NewButtons/NewRequest" to="." method="_on_new_request_button_down"]
+[connection signal="button_down" from="Panel/MarginContainer/VBoxContainer/HSplitContainer/VSplitContainer/RequestsList/NewButtons/NewFolder" to="." method="_on_new_folder_button_down"]

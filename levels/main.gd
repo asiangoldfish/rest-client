@@ -1,9 +1,10 @@
 extends Control
 
 #@onready var request_menu_container = self.find_child("RequestMenuContainer")
-@onready var requests_list = self.find_child("Requests")
-@onready var request_btn = preload("res://menus/request_btn.tscn")
-@onready var request_menu = self.find_child("RequestOverview") as RequestMenu
+@onready var requests_list = find_child("Requests")
+@onready var request_menu = find_child("RequestOverview") as RequestMenu
+
+@onready var request_btn = preload("res://widgets/request_btn.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -26,15 +27,20 @@ func _input(event):
 # newly created request right away.
 func _on_new_request_button_down() -> void:
     request_menu.can_send_request(true)
-    var new_btn = request_btn.instantiate()
+    var new_btn: RequestButton = request_btn.instantiate()
 
-    # The UUID helps us save and load the correct UUID to file  
+    # The UUID helps us save and load the correct UUID to file
     const uuid = preload('res://vendor/uuid.gd')
     new_btn.request_id = uuid.v4()
-    
+
     requests_list.add_child(new_btn)
     request_menu.clear_all()
     request_menu.request_id = new_btn.request_id
+
+    # Show the request right away
+    self.request_menu.request_id = new_btn.request_id
+    self.request_menu.request_name = new_btn.request_name
+    self.request_menu.show()
 
 # Read file with all requests and load the requests dynamically
 func create_requests_objects():
@@ -55,7 +61,8 @@ func create_requests_objects():
 
     # Find all folders
     for request_id in RequestLoader.requests:
-        var folder_name: String = RequestLoader.requests.get(request_id).get("folder")
+        assert(RequestLoader.requests.get(request_id), "No request ID was found")
+        var folder_name = RequestLoader.requests.get(request_id).get("folder")
 
         if folder_name and not folder_name.is_empty():
             # 1. Foldable Container
@@ -90,3 +97,7 @@ func create_requests_objects():
 func request_was_selected(request_id: String):
     request_menu.load_request(request_id)
     request_menu.show()
+
+func _on_new_folder_button_down() -> void:
+    var new_folder = FoldableContainer.new()
+    requests_list.add_child(new_folder)

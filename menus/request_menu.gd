@@ -17,9 +17,15 @@ class_name RequestMenu
 @export var request_id: String = ""
 
 # Name displayed on the request
-@export var request_name: String = ""
+@export var request_name: String :
+    get:
+        return request_name
+    set(value):
+        request_name = value
+        title_edit.text = value
 
 signal title_was_changed
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -38,7 +44,7 @@ func _ready() -> void:
     http_request.request_completed.connect(_on_request_completed)
 
     can_send_request(not request_id.is_empty())
-        
+
 
 func _input(event: InputEvent) -> void:
     if event.is_action_pressed("save_request") and not request_id.is_empty():
@@ -92,7 +98,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
     if result == HTTPRequest.RESULT_SUCCESS:
         var text = body.get_string_from_utf8()
         # Attempt to JSONify. If it fails, just output the raw data.
-        
+
         var json_data = JSON.parse_string(text)
 
         if json_data != null:
@@ -125,20 +131,21 @@ func save():
 
     RequestLoader.save_request(request_id, request_dict)
 
-        
+
 func _on_dummy_address_button_down() -> void:
     address_bar.text = Constants.mock_request
 
 
 func _on_title_edit_text_submitted(new_text: String) -> void:
-    request_name = new_text
-    print("Title was changed to " + new_text)
-    emit_signal("title_was_changed", request_id, new_text)
+    self.request_name = new_text
+    if not new_text.is_empty():
+        self.title_edit.caret_column = new_text.length()
+        self.emit_signal("title_was_changed", request_id, new_text)
 
 func load_request(id: String):
     can_send_request(true)
     request_id = id
-    var req = RequestLoader.get_request(id)    
+    var req = RequestLoader.get_request(id)
     if not req:
         print("Request was not found!")
     else:

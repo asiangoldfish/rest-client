@@ -6,6 +6,9 @@ signal request_was_selected
 var request_id: String = ""
 var request_name: String = "New request"
 
+func _ready() -> void:
+    self.text = request_name
+
 func set_request_name(s: String) -> void:
     request_name = s
     self.text = s
