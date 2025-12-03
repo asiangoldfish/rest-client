@@ -3,8 +3,10 @@ extends Control
 #@onready var request_menu_container = self.find_child("RequestMenuContainer")
 @onready var requests_list = find_child("Requests")
 @onready var request_menu = find_child("RequestOverview") as RequestMenu
+@onready var new_folder_popup = find_child("NewFolderPopup")
 
 @onready var request_btn = preload("res://widgets/request_btn.tscn")
+@onready var request_folder = preload("res://widgets/request_folder.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -13,6 +15,14 @@ func _ready() -> void:
     request_menu.hide()
 
     create_requests_objects()
+    
+    new_folder_popup.hide()
+    new_folder_popup.folder_name_confirmed.connect(folder_name_confirmed)
+
+func folder_name_confirmed(folder_name: String):
+    var new_folder: RequestFolder = request_folder.instantiate()
+    new_folder.title = folder_name
+    requests_list.add_child(new_folder)
 
 func title_was_changed(request_id: String, new_text: String):
     for child in requests_list.get_children():
@@ -22,6 +32,7 @@ func title_was_changed(request_id: String, new_text: String):
 func _input(event):
     if event.is_action_pressed("quit"):
         get_tree().quit()
+        
 
 # Create a new and fresh request. Also, associate the request menu with this
 # newly created request right away.
@@ -99,5 +110,4 @@ func request_was_selected(request_id: String):
     request_menu.show()
 
 func _on_new_folder_button_down() -> void:
-    var new_folder = FoldableContainer.new()
-    requests_list.add_child(new_folder)
+    new_folder_popup.show()

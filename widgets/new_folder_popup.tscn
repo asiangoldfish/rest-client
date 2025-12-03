@@ -1,0 +1,80 @@
+[gd_scene load_steps=4 format=3 uid="uid://o6gfmcnpmhxq"]
+
+[ext_resource type="Script" uid="uid://vxfis18uwo5l" path="res://widgets/new_folder_popup.gd" id="1_sni15"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_l8qe7"]
+color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_0knn4"]
+color = Color(0, 0, 0, 0)
+
+[node name="NewFolderPopup" type="Panel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 531.0
+offset_bottom = 251.0
+script = ExtResource("1_sni15")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 527.0
+offset_bottom = 247.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="NewFolderLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "New Folder"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FolderNameLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Name:"
+
+[node name="VSeparator" type="VSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+theme_override_styles/separator = SubResource("StyleBoxLine_l8qe7")
+
+[node name="FolderNameLineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="Confirm" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Confirm"
+
+[node name="VSeparator" type="VSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxLine_0knn4")
+
+[node name="Cancel" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Cancel"
+
+[connection signal="text_submitted" from="MarginContainer/VBoxContainer/HBoxContainer/FolderNameLineEdit" to="." method="_on_folder_name_line_edit_text_submitted"]
+[connection signal="button_down" from="MarginContainer/VBoxContainer/HBoxContainer2/Confirm" to="." method="_on_confirm_button_down"]
+[connection signal="button_down" from="MarginContainer/VBoxContainer/HBoxContainer2/Cancel" to="." method="_on_cancel_button_down"]
