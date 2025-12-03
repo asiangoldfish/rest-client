@@ -6,7 +6,7 @@ extends Control
 @onready var new_folder_popup = find_child("NewFolderPopup")
 
 @onready var request_btn = preload("res://widgets/request_btn.tscn")
-@onready var request_folder = preload("res://widgets/request_folder.tscn")
+@onready var request_folder: PackedScene = preload("res://widgets/request_folder.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -15,14 +15,14 @@ func _ready() -> void:
     request_menu.hide()
 
     create_requests_objects()
-    
+
     new_folder_popup.hide()
     new_folder_popup.folder_name_confirmed.connect(folder_name_confirmed)
 
 func folder_name_confirmed(folder_name: String):
     var new_folder: RequestFolder = request_folder.instantiate()
-    new_folder.title = folder_name
     requests_list.add_child(new_folder)
+    new_folder.title = folder_name
 
 func title_was_changed(request_id: String, new_text: String):
     for child in requests_list.get_children():
@@ -32,7 +32,7 @@ func title_was_changed(request_id: String, new_text: String):
 func _input(event):
     if event.is_action_pressed("quit"):
         get_tree().quit()
-        
+
 
 # Create a new and fresh request. Also, associate the request menu with this
 # newly created request right away.
@@ -75,14 +75,11 @@ func create_requests_objects():
 
         if folder_name and not folder_name.is_empty():
             # 1. Foldable Container
-            var new_folder = FoldableContainer.new()
+            var new_folder = request_folder.instantiate()
+            requests_list.add_child(new_folder)
+
             new_folder.title = folder_name
             new_folders[folder_name] = new_folder
-
-            # 2. VBoxContainer
-            var new_vbox = VBoxContainer.new()
-            new_folder.add_child(new_vbox)
-            requests_list.add_child(new_folder)
 
     # 3. Associated requests
     for request_id in RequestLoader.requests:
@@ -98,7 +95,7 @@ func create_requests_objects():
         # If the request is associated with a folder, it will go there.
         var folder_name = req.get("folder")
         if folder_name and not folder_name.is_empty():
-            new_folders[folder_name].add_child(new_btn)
+            new_folders[folder_name].add_item(new_btn)
         else:
             requests_list.add_child(new_btn)
 

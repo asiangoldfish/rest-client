@@ -1,8 +1,55 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5rn4vdt3cdiv"]
+[gd_scene load_steps=3 format=3 uid="uid://b847gooblslh1"]
 
 [ext_resource type="Script" uid="uid://bxl2pd8qgsmwj" path="res://widgets/request_folder.gd" id="1_i8uqo"]
 
-[node name="RequestFolder" type="FoldableContainer"]
-offset_right = 24.0
-offset_bottom = 32.0
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_i8uqo"]
+color = Color(0, 0, 0, 0)
+
+[node name="RequestFolder" type="PanelContainer"]
+offset_right = 135.0
+offset_bottom = 47.0
 script = ExtResource("1_i8uqo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HeaderContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HeaderContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="ArrowLabel" type="Label" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3180198, 0.31801978, 0.31801975, 1)
+text = "⌄"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxLine_i8uqo")
+
+[node name="FolderName" type="Label" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Folder Title"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="FolderContainer" type="MarginContainer" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[connection signal="gui_input" from="VBoxContainer/HeaderContainer" to="." method="_on_header_container_gui_input"]

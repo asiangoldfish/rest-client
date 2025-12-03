@@ -33,11 +33,14 @@ func _ready() -> void:
 
 
     http_request.request_completed.connect(_on_request_completed)
-    
+
     can_send_request(false)
 
 
 func _input(event: InputEvent) -> void:
+    if not request:
+        return
+
     if event.is_action_pressed("save_request") and not request.request_id.is_empty():
         print("Request saved")
         save()

@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://dynrpeblyxbyp" path="res://levels/main.gd" id="1_m1504"]
 [ext_resource type="Script" uid="uid://cm7nb01xglcgc" path="res://menus/context_menu.gd" id="2_ifaiv"]
-[ext_resource type="Script" uid="uid://dbn7lmvkw7k2m" path="res://levels/requests_list.gd" id="3_ifaiv"]
-[ext_resource type="PackedScene" uid="uid://o6gfmcnpmhxq" path="res://widgets/new_folder_popup.tscn" id="4_m1504"]
+[ext_resource type="Script" path="res://levels/requests_list.gd" id="3_ifaiv"]
+[ext_resource type="PackedScene" path="res://widgets/new_folder_popup.tscn" id="4_m1504"]
 [ext_resource type="PackedScene" uid="uid://culsb5w1vso6o" path="res://menus/request_menu.tscn" id="4_qy63d"]
 
 [sub_resource type="Theme" id="Theme_ig7tw"]
