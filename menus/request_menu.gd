@@ -13,19 +13,10 @@ class_name RequestMenu
 @onready var title_edit = find_child("TitleEdit")
 @onready var method_menu = find_child("MethodMenu")
 
-# This is the same ID as the request it belongs to. See RequestBtn.id
-@export var request_id: String = ""
-
-# Name displayed on the request
-@export var request_name: String :
-    get:
-        return request_name
-    set(value):
-        request_name = value
-        title_edit.text = value
-
 signal title_was_changed
 
+# The request that the menu is showing
+var request: RequestButton = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -42,12 +33,12 @@ func _ready() -> void:
 
 
     http_request.request_completed.connect(_on_request_completed)
-
-    can_send_request(not request_id.is_empty())
+    
+    can_send_request(false)
 
 
 func _input(event: InputEvent) -> void:
-    if event.is_action_pressed("save_request") and not request_id.is_empty():
+    if event.is_action_pressed("save_request") and not request.request_id.is_empty():
         print("Request saved")
         save()
 
@@ -120,16 +111,17 @@ func save():
         headers.append(label.text)
 
     var request_dict = {
-        "name": request_name,
+        "name": request.request_name,
         "type": "request",
         "method": get_method(method_menu.selected),
         "url": address_bar.text,
         "response_body": response_body.text,
         "headers": headers,
-        "request_body": request_body.text
+        "request_body": request_body.text,
+        "folder": request.folder
     }
 
-    RequestLoader.save_request(request_id, request_dict)
+    RequestLoader.save_request(request.request_id, request_dict)
 
 
 func _on_dummy_address_button_down() -> void:
@@ -137,14 +129,14 @@ func _on_dummy_address_button_down() -> void:
 
 
 func _on_title_edit_text_submitted(new_text: String) -> void:
-    self.request_name = new_text
+    self.request.request_name = new_text
     if not new_text.is_empty():
         self.title_edit.caret_column = new_text.length()
-        self.emit_signal("title_was_changed", request_id, new_text)
+        self.emit_signal("title_was_changed", self.request.request_id, new_text)
 
 func load_request(id: String):
     can_send_request(true)
-    request_id = id
+    self.request.request_id = id
     var req = RequestLoader.get_request(id)
     if not req:
         print("Request was not found!")
@@ -152,7 +144,7 @@ func load_request(id: String):
         address_bar.text = req.get("url")
         response_body.text = req.get("response_body") if req.get("response_body") else ""
         title_edit.text = req.get("name")
-        request_name = req.get("name")
+        request.request_name = req.get("name")
         method_menu.selected = get_method_id(req.get("method"))
         request_body.text = req.get("request_body") if req.get("request_body") else ""
         for txt in req.get("headers"):

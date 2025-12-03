@@ -5,6 +5,7 @@ signal request_was_selected
 
 var request_id: String = ""
 var request_name: String = "New request"
+var folder: String = ""
 
 func _ready() -> void:
     self.text = request_name
@@ -34,4 +35,4 @@ func set_request_name(s: String) -> void:
     self.text = s
 
 func _on_button_down() -> void:
-    request_was_selected.emit(request_id)
+    self.emit_signal("request_was_selected", self)

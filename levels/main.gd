@@ -46,11 +46,9 @@ func _on_new_request_button_down() -> void:
 
     requests_list.add_child(new_btn)
     request_menu.clear_all()
-    request_menu.request_id = new_btn.request_id
 
     # Show the request right away
-    self.request_menu.request_id = new_btn.request_id
-    self.request_menu.request_name = new_btn.request_name
+    self.request_menu.request = new_btn
     self.request_menu.show()
 
 # Read file with all requests and load the requests dynamically
@@ -105,8 +103,10 @@ func create_requests_objects():
             requests_list.add_child(new_btn)
 
 # This is a callback when a request is selected from the requests list
-func request_was_selected(request_id: String):
-    request_menu.load_request(request_id)
+func request_was_selected(request_button: RequestButton):
+    print(request_button)
+    request_menu.request = request_button
+    request_menu.can_send_request(true)
     request_menu.show()
 
 func _on_new_folder_button_down() -> void:

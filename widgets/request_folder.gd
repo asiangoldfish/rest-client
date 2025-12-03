@@ -11,5 +11,6 @@ func _drop_data(position, data):
     print("Request '" + data.node.request_name + "' moved to folder '" + self.title + "'")
     
     var btn = data.node
+    btn.folder = self.title
     btn.get_parent().remove_child(btn)
     self.add_child(btn)
