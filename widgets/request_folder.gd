@@ -6,6 +6,13 @@ class_name RequestFolder extends Control
 
 # Folder id: super.name
 
+## Selection lets the user multi-select folders to perform an action on
+##
+## Parameters:
+##   self: the request folder control node
+##   value: true or false
+signal is_selection_box_ticked
+
 ## Emitted whenever the context menu of a folder should be opened.
 signal open_context_menu
 
@@ -45,7 +52,7 @@ func _drop_data(_position, data):
     print("Request '" + data.node.request_name + "' moved to folder '" + self.title + "'")
 
     var btn = data.node
-    btn.folder = self.title
+    btn.folder_id = self.name
     btn.get_parent().remove_child(btn)
     self.add_item(btn)
 
@@ -58,11 +65,12 @@ func _on_header_container_gui_input(event: InputEvent) -> void:
             if event.pressed:
                 self.is_expanded = !self.is_expanded
 
-func _on_context_menu(event: InputEvent) -> void:
-    if event is InputEventMouseButton:
-        if event.is_pressed() and event.button_index == MOUSE_BUTTON_RIGHT:
-            open_context_menu.emit(self)
-
 
 func _on_folder_name_text_changed(new_text: String) -> void:
     title = new_text
+
+    if not new_text.is_empty():
+        folder_name.caret_column = new_text.length()
+
+func _on_selection_box_toggled(toggled_on: bool) -> void:
+    is_selection_box_ticked.emit(self, toggled_on)   

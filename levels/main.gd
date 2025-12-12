@@ -8,6 +8,10 @@ extends Control
 @onready var request_btn = preload("res://widgets/request_btn.tscn")
 @onready var request_folder: PackedScene = preload("res://widgets/request_folder.tscn")
 
+## This array lets us select multiple folders to perform some action on. We can
+## for example delete multiple folders simultaneously.
+var selected_folders: Array = []
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
     RequestLoader.initialise()
@@ -53,11 +57,10 @@ func write_requests_to_file():
         var id: String = folder.name
         var display_name: String = folder.title
             
-        json_objects.append({
-            id: {
-                "name": display_name,
-                "type": "folder"
-            }})
+        json_objects[id] = {
+            "name": display_name,
+            "type": "folder"
+        }
         
         # A folder may be associated with a set of requests. We coulld
         # serialise them here, but to avoid code duplication we do it in a
@@ -102,7 +105,11 @@ func load_requests_objects_from_file():
     # Find all folders
     for request_id in RequestLoader.requests:
         assert(RequestLoader.requests.get(request_id), "No request ID was found")
-        var folder_name = RequestLoader.requests.get(request_id).get("folder")
+        var folder_type = RequestLoader.requests.get(request_id).get("type")
+        var folder_name = RequestLoader.requests.get(request_id).get("name")
+
+        if folder_type != "folder":
+            continue
 
         if folder_name and not folder_name.is_empty():
             # 1. Foldable Container
@@ -110,12 +117,16 @@ func load_requests_objects_from_file():
             requests_list.add_child(new_folder)
 
             new_folder.title = folder_name
+            new_folder.name = request_id
             new_folder.open_context_menu.connect(_open_folder_context_menu)
-            new_folders[folder_name] = new_folder
+            new_folder.is_selection_box_ticked.connect(_on_selection_folder_checked)
+            new_folders[request_id] = new_folder
 
     # 3. Associated requests
     for request_id in RequestLoader.requests:
         var req = RequestLoader.requests.get(request_id)
+        if req.get("type") != "request":
+            continue
 
         assert(req, "Request ID exists, but its meta data is null")
 
@@ -125,9 +136,9 @@ func load_requests_objects_from_file():
         new_btn.request_was_selected.connect(request_was_selected)
 
         # If the request is associated with a folder, it will go there.
-        var folder_name = req.get("folder")
-        if folder_name and not folder_name.is_empty():
-            new_folders[folder_name].add_item(new_btn)
+        var folder_id = req.get("folder")
+        if folder_id and not folder_id.is_empty():
+            new_folders[folder_id].add_item(new_btn)
         else:
             requests_list.add_child(new_btn)
 
@@ -158,6 +169,15 @@ func _on_new_folder_button_down() -> void:
 
     # See folder_name_confirmed() where the folder is created
 
+## Invoked when multiple folders are deleted at once.
+## TODO also delete request buttons
+func _on_delete_request_button_down() -> void:
+    for folder: RequestFolder in selected_folders:
+        requests_list.remove_child(folder)
+        folder.queue_free()
+    selected_folders.clear()
+
+
 # Signal Callbacks
 # ---------
 
@@ -172,7 +192,7 @@ func folder_name_confirmed(folder_name: String):
 ## Invoked when the request menu tries to change a requests name/title
 func title_was_changed(request_id: String, new_text: String):
     for child in requests_list.get_children():
-        if child.request_id == request_id:
+        if child is RequestButton and child.request_id == request_id:
             child.text = new_text
 
 ## This is a callback when a request is selected from the requests list
@@ -183,3 +203,16 @@ func request_was_selected(request_button: RequestButton):
 ## Open a request folder's context menu
 func _open_folder_context_menu(folder: RequestFolder) -> void:
     print("Open folder: " + folder.folder_name.text)
+
+## Invoked when a request folder checks itself for multi selection. We can for
+## example delete multiple folders at once.
+func _on_selection_folder_checked(folder: RequestFolder, is_checked: bool) -> void:
+    # Add to the array of folders
+    if is_checked:
+        assert(not folder in selected_folders, 
+            "Tried to add an already existing folder to selected folders array")
+        selected_folders.append(folder)
+    elif not is_checked:
+        assert(folder in selected_folders,
+            "Tried to remove a folder from selected_folders, but it is not added")
+        selected_folders.erase(folder)

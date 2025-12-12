@@ -215,3 +215,6 @@ func _on_method_menu_item_selected(index: int) -> void:
 func _on_address_bar_text_changed(new_text: String) -> void:
     request.url = new_text
     
+
+func _on_request_body_text_changed() -> void:
+    request.request_body = request_body.text

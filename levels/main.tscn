@@ -138,3 +138,4 @@ grow_vertical = 2
 [connection signal="id_pressed" from="Panel/MarginContainer/VBoxContainer/MenuBar/File" to="Panel/MarginContainer/VBoxContainer/MenuBar" method="_on_file_id_pressed"]
 [connection signal="button_down" from="Panel/MarginContainer/VBoxContainer/HSplitContainer/VSplitContainer/RequestsList/NewButtons/NewRequest" to="." method="_on_new_request_button_down"]
 [connection signal="button_down" from="Panel/MarginContainer/VBoxContainer/HSplitContainer/VSplitContainer/RequestsList/NewButtons/NewFolder" to="." method="_on_new_folder_button_down"]
+[connection signal="button_down" from="Panel/MarginContainer/VBoxContainer/HSplitContainer/VSplitContainer/RequestsList/NewButtons/DeleteRequest" to="." method="_on_delete_request_button_down"]

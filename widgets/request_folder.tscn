@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://b847gooblslh1"]
+[gd_scene load_steps=7 format=3 uid="uid://b847gooblslh1"]
 
 [ext_resource type="Script" uid="uid://bxl2pd8qgsmwj" path="res://widgets/request_folder.gd" id="1_i8uqo"]
 
@@ -11,6 +11,10 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i8uqo"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n0ywv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_i8uqo"]
+
 [node name="RequestFolder" type="PanelContainer"]
 offset_right = 135.0
 offset_bottom = 47.0
@@ -18,14 +22,16 @@ script = ExtResource("1_i8uqo")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="HeaderContainer" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
-mouse_filter = 1
+mouse_filter = 2
 mouse_default_cursor_shape = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HeaderContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 10
@@ -33,6 +39,7 @@ theme_override_constants/margin_bottom = 5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HeaderContainer/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="ArrowLabel" type="Label" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -48,21 +55,33 @@ theme_override_styles/separator = SubResource("StyleBoxLine_i8uqo")
 [node name="FolderName" type="LineEdit" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 1
 theme_override_styles/normal = SubResource("StyleBoxFlat_d7dth")
 theme_override_styles/focus = SubResource("StyleBoxFlat_i8uqo")
 placeholder_text = "New Folder"
+caret_blink = true
+caret_blink_interval = 0.6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+[node name="SelectionBox" type="CheckBox" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
-mouse_filter = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_n0ywv")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_i8uqo")
+theme_override_colors/checkbox_unchecked_color = Color(5.912981, 5.912981, 5.912981, 1)
+flat = true
+icon_alignment = 1
 
-[node name="FolderContainer" type="MarginContainer" parent="VBoxContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[connection signal="gui_input" from="." to="." method="_on_context_menu"]
+[node name="FolderContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+mouse_filter = 0
+
+[connection signal="gui_input" from="." to="." method="_on_header_container_gui_input"]
 [connection signal="gui_input" from="VBoxContainer/HeaderContainer" to="." method="_on_header_container_gui_input"]
 [connection signal="text_changed" from="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer/FolderName" to="." method="_on_folder_name_text_changed"]
+[connection signal="toggled" from="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer/SelectionBox" to="." method="_on_selection_box_toggled"]

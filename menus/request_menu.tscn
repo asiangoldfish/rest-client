@@ -54,16 +54,16 @@ text = "Insert Dummy Address"
 [node name="TabContainer2" type="TabContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 1
+current_tab = 0
 
 [node name="Request Body" type="TextEdit" parent="VBoxContainer/TabContainer2"]
-visible = false
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Send a request to get a response using the address bar"
 metadata/_tab_index = 0
 
 [node name="Request Headers" type="Panel" parent="VBoxContainer/TabContainer2"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 metadata/_tab_index = 1
@@ -108,3 +108,4 @@ layout_mode = 2
 [connection signal="text_submitted" from="VBoxContainer/HBoxContainer/AddressBar" to="." method="_on_address_bar_text_submitted"]
 [connection signal="button_down" from="VBoxContainer/HBoxContainer/SendRequest" to="." method="_on_send_request_button_down"]
 [connection signal="button_down" from="VBoxContainer/HBoxContainer/DummyAddress" to="." method="_on_dummy_address_button_down"]
+[connection signal="text_changed" from="VBoxContainer/TabContainer2/Request Body" to="." method="_on_request_body_text_changed"]
