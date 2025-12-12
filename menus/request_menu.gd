@@ -13,7 +13,16 @@ class_name RequestMenu
 @onready var title_edit = find_child("TitleEdit")
 @onready var method_menu = find_child("MethodMenu")
 
+
+## This signal is emitted when a request is queued to change its display name
 signal title_was_changed
+
+## This signal is emitted when the request is queued for deletion
+##
+## Parameters:
+##   self: a reference to the button to delete
+signal delete_request
+
 
 # The request that the menu is showing
 var request: RequestButton = null
@@ -93,7 +102,6 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
         else:
             response_body.text = text
         
-        print(response_body.text)
         request.response_body = response_body.text
     else:
         print("HTTP request failed with code: ", response_code)
@@ -218,3 +226,10 @@ func _on_address_bar_text_changed(new_text: String) -> void:
 
 func _on_request_body_text_changed() -> void:
     request.request_body = request_body.text
+
+## Invoked when the selected request should be queued for deletion
+func _on_delete_request_btn_button_down() -> void:
+    if not request:
+        return
+    else:
+        delete_request.emit(request)

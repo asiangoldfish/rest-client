@@ -16,6 +16,7 @@ var selected_folders: Array = []
 func _ready() -> void:
     RequestLoader.initialise()
     request_menu.title_was_changed.connect(title_was_changed)
+    request_menu.delete_request.connect(_delete_request)
     request_menu.hide()
 
     load_requests_objects_from_file()
@@ -216,3 +217,26 @@ func _on_selection_folder_checked(folder: RequestFolder, is_checked: bool) -> vo
         assert(folder in selected_folders,
             "Tried to remove a folder from selected_folders, but it is not added")
         selected_folders.erase(folder)
+
+
+## Delete a selected request. Called by the request menu's delete button
+func _delete_request(request: RequestButton):
+
+    # Remove from the parent folder
+    var found_folder = null
+    if request.folder_id:
+        for child in requests_list.get_children():
+            if child is not RequestFolder:
+                continue
+            elif child.name == request.folder_id:
+                found_folder = child
+                break
+    
+    # The request can either be in the root request list or in a folder.
+    # This must be revisited if we implement nested folders in the future.
+    if found_folder:
+        found_folder.folder_container.remove_child(request)
+    else:
+        requests_list.remove_child(request)
+
+    request.queue_free()

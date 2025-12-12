@@ -1,7 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://culsb5w1vso6o"]
+[gd_scene load_steps=6 format=3 uid="uid://culsb5w1vso6o"]
 
 [ext_resource type="Script" uid="uid://bmqobp6jygrrj" path="res://menus/request_menu.gd" id="1_5kesq"]
 [ext_resource type="PackedScene" uid="uid://dcinjdumkq4eb" path="res://menus/request_headers_container.tscn" id="2_7cr38"]
+[ext_resource type="Texture2D" uid="uid://xx6so8mtn06k" path="res://images/trash.png" id="2_d5r7w"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2xpk2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5r7w"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="RequestMenu" type="Control"]
 layout_mode = 3
@@ -34,6 +40,13 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "New request"
+
+[node name="DeleteRequestBtn" type="Button" parent="VBoxContainer/TitleContainer"]
+layout_mode = 2
+theme_override_constants/align_to_largest_stylebox = 100
+theme_override_styles/normal = SubResource("StyleBoxFlat_2xpk2")
+theme_override_styles/focus = SubResource("StyleBoxFlat_d5r7w")
+icon = ExtResource("2_d5r7w")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -104,6 +117,7 @@ layout_mode = 2
 
 [connection signal="item_selected" from="VBoxContainer/TitleContainer/MethodMenu" to="." method="_on_method_menu_item_selected"]
 [connection signal="text_changed" from="VBoxContainer/TitleContainer/TitleEdit" to="." method="_on_title_edit_text_submitted"]
+[connection signal="button_down" from="VBoxContainer/TitleContainer/DeleteRequestBtn" to="." method="_on_delete_request_btn_button_down"]
 [connection signal="text_changed" from="VBoxContainer/HBoxContainer/AddressBar" to="." method="_on_address_bar_text_changed"]
 [connection signal="text_submitted" from="VBoxContainer/HBoxContainer/AddressBar" to="." method="_on_address_bar_text_submitted"]
 [connection signal="button_down" from="VBoxContainer/HBoxContainer/SendRequest" to="." method="_on_send_request_button_down"]
