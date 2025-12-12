@@ -102,7 +102,9 @@ grow_vertical = 2
 [node name="ResponseHeadersContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/Headers/ScrollContainer"]
 layout_mode = 2
 
+[connection signal="item_selected" from="VBoxContainer/TitleContainer/MethodMenu" to="." method="_on_method_menu_item_selected"]
 [connection signal="text_changed" from="VBoxContainer/TitleContainer/TitleEdit" to="." method="_on_title_edit_text_submitted"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/AddressBar" to="." method="_on_address_bar_text_changed"]
 [connection signal="text_submitted" from="VBoxContainer/HBoxContainer/AddressBar" to="." method="_on_address_bar_text_submitted"]
 [connection signal="button_down" from="VBoxContainer/HBoxContainer/SendRequest" to="." method="_on_send_request_button_down"]
 [connection signal="button_down" from="VBoxContainer/HBoxContainer/DummyAddress" to="." method="_on_dummy_address_button_down"]

@@ -38,3 +38,7 @@ static func save_request(request_id: String, request_dict: Dictionary):
     var json_string = JSON.stringify(requests, "\t")
     save_file.store_line(json_string)
 
+static func write_all_requests(request_dict: Dictionary):
+    var save_file = FileAccess.open(Constants.requests_save, FileAccess.WRITE)
+    var json_string = JSON.stringify(request_dict, "\t")
+    save_file.store_line(json_string)

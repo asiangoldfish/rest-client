@@ -37,15 +37,6 @@ func _ready() -> void:
     can_send_request(false)
 
 
-func _input(event: InputEvent) -> void:
-    if not request:
-        return
-
-    if event.is_action_pressed("save_request") and not request.request_id.is_empty():
-        print("Request saved")
-        save()
-
-
 func can_send_request(check: bool) -> void:
     send_request_btn.disabled = not check
     dummy_address.disabled = not check
@@ -68,12 +59,11 @@ func _on_address_bar_text_submitted(url: String) -> void:
     if url.is_empty():
         print("Cannot send empty request")
     else:
-        #print("Sending request")
-        #print(request_body.text)
-        print(JSON.parse_string(request_body.text))
         var test_headers = [
             "Content-Type: application/json"
         ]
+
+        request.url = url
 
 #        http_request.set_timeout(10000)
         http_request.request(url, test_headers, method_menu.selected, request_body.text)
@@ -89,6 +79,8 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
         new_header.text = s
         response_headers_container.add_child(new_header)
 
+    request.response_headers = headers_array_to_dictionary(headers)
+
     if result == HTTPRequest.RESULT_SUCCESS:
         var text = body.get_string_from_utf8()
         # Attempt to JSONify. If it fails, just output the raw data.
@@ -100,6 +92,9 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
             response_body.text = JSON.stringify(json_data, "\t")
         else:
             response_body.text = text
+        
+        print(response_body.text)
+        request.response_body = response_body.text
     else:
         print("HTTP request failed with code: ", response_code)
 
@@ -107,28 +102,10 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 func _on_send_request_button_down() -> void:
     _on_address_bar_text_submitted(address_bar.text)
 
-func save():
-    # Gather headers in a list
-    var headers = []
-    for label in response_headers_container.get_children():
-        headers.append(label.text)
-
-    var request_dict = {
-        "name": request.request_name,
-        "type": "request",
-        "method": get_method(method_menu.selected),
-        "url": address_bar.text,
-        "response_body": response_body.text,
-        "headers": headers,
-        "request_body": request_body.text,
-        "folder": request.folder
-    }
-
-    RequestLoader.save_request(request.request_id, request_dict)
-
 
 func _on_dummy_address_button_down() -> void:
     address_bar.text = Constants.mock_request
+    request.url = Constants.mock_request
 
 
 func _on_title_edit_text_submitted(new_text: String) -> void:
@@ -136,24 +113,23 @@ func _on_title_edit_text_submitted(new_text: String) -> void:
     if not new_text.is_empty():
         self.title_edit.caret_column = new_text.length()
         self.emit_signal("title_was_changed", self.request.request_id, new_text)
+    
 
-func load_request(id: String):
+func load_request(loaded_request: RequestButton):
     can_send_request(true)
-    self.request.request_id = id
-    var req = RequestLoader.get_request(id)
-    if not req:
-        print("Request was not found!")
-    else:
-        address_bar.text = req.get("url")
-        response_body.text = req.get("response_body") if req.get("response_body") else ""
-        title_edit.text = req.get("name")
-        request.request_name = req.get("name")
-        method_menu.selected = get_method_id(req.get("method"))
-        request_body.text = req.get("request_body") if req.get("request_body") else ""
-        for txt in req.get("headers"):
-            var new_header = Label.new()
-            new_header.text = txt
-            response_headers_container.add_child(new_header)
+    request = loaded_request
+    request = loaded_request
+    address_bar.text = request.url
+    response_body.text = request.response_body
+    title_edit.text = request.request_name
+    method_menu.selected = get_method_id(request.method)
+    request_body.text = request.request_body
+    response_body.text = request.response_body
+
+    for key in request.response_headers:
+        var new_header = Label.new()
+        new_header.text = request.response_headers.get(key)
+        response_headers_container.add_child(new_header)
 
 func get_method(method_id: int) -> String:
     var method: String
@@ -192,3 +168,50 @@ func get_method_id(method: String) -> int:
         id = HTTPClient.Method.METHOD_OPTIONS
 
     return id
+
+func get_method_name(method_id: int) -> String:
+    match method_id:
+        HTTPClient.Method.METHOD_GET:
+            return "GET"
+        HTTPClient.Method.METHOD_POST:
+            return "POST"
+        HTTPClient.Method.METHOD_DELETE:
+            return "DELETE"
+        HTTPClient.Method.METHOD_PUT:
+            return "PUT"
+        HTTPClient.Method.METHOD_PATCH:
+            return "PATCH"
+        HTTPClient.Method.METHOD_HEAD:
+            return "HEAD"
+        HTTPClient.Method.METHOD_OPTIONS:
+            return "OPTIONS"
+        _:
+            return "UNKNOWN"
+
+
+
+## Converts HTTP headers in PackedStringArray to dictionary
+func headers_array_to_dictionary(headers_array: PackedStringArray) -> Dictionary:
+    var headers_dict = {}
+    for header_string in headers_array:
+        # Split the string at the first occurrence of ": "
+        var separator_index = header_string.find(":")
+        if separator_index != -1:
+            var key = header_string.substr(0, separator_index).strip_edges()
+            var value = header_string.substr(separator_index + 1, header_string.length()).strip_edges()
+            # If the key already exists, append the value (handling multi-value headers, e.g., Set-Cookie)
+            if headers_dict.has(key):
+                headers_dict[key] = str(headers_dict[key]) + "; " + value
+            else:
+                headers_dict[key] = value
+    return headers_dict
+
+func _on_method_menu_item_selected(index: int) -> void:
+    if not request:
+        return
+
+    request.method = get_method_name(index)
+
+func _on_address_bar_text_changed(new_text: String) -> void:
+    request.url = new_text
+    

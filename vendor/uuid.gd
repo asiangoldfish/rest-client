@@ -21,7 +21,7 @@ static func uuidbinrng(rng: RandomNumberGenerator):
     rng.randi() & BYTE_MASK, rng.randi() & BYTE_MASK, rng.randi() & BYTE_MASK, rng.randi() & BYTE_MASK,
   ]
 
-static func v4():
+static func v4() -> String:
   # 16 random bytes with the bytes on index 6 and 8 modified
   var b = uuidbin()
 

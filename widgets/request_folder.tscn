@@ -1,9 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://b847gooblslh1"]
+[gd_scene load_steps=5 format=3 uid="uid://b847gooblslh1"]
 
 [ext_resource type="Script" uid="uid://bxl2pd8qgsmwj" path="res://widgets/request_folder.gd" id="1_i8uqo"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_i8uqo"]
 color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d7dth"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i8uqo"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="RequestFolder" type="PanelContainer"]
 offset_right = 135.0
@@ -15,6 +21,7 @@ layout_mode = 2
 
 [node name="HeaderContainer" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
+mouse_filter = 1
 mouse_default_cursor_shape = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HeaderContainer"]
@@ -34,16 +41,20 @@ text = "⌄"
 
 [node name="VSeparator" type="VSeparator" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 10
 theme_override_styles/separator = SubResource("StyleBoxLine_i8uqo")
 
-[node name="FolderName" type="Label" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
+[node name="FolderName" type="LineEdit" parent="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Folder Title"
+theme_override_styles/normal = SubResource("StyleBoxFlat_d7dth")
+theme_override_styles/focus = SubResource("StyleBoxFlat_i8uqo")
+placeholder_text = "New Folder"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
+mouse_filter = 0
 
 [node name="FolderContainer" type="MarginContainer" parent="VBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -52,4 +63,6 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
+[connection signal="gui_input" from="." to="." method="_on_context_menu"]
 [connection signal="gui_input" from="VBoxContainer/HeaderContainer" to="." method="_on_header_container_gui_input"]
+[connection signal="text_changed" from="VBoxContainer/HeaderContainer/MarginContainer/HBoxContainer/FolderName" to="." method="_on_folder_name_text_changed"]

@@ -1,6 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://o6gfmcnpmhxq"]
+[gd_scene load_steps=5 format=3 uid="uid://o6gfmcnpmhxq"]
 
 [ext_resource type="Script" uid="uid://vxfis18uwo5l" path="res://widgets/new_folder_popup.gd" id="1_sni15"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1b388"]
+bg_color = Color(0.46808589, 0.5237782, 0.55326796, 1)
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_l8qe7"]
 color = Color(0, 0, 0, 0)
@@ -13,6 +16,7 @@ offset_left = 4.0
 offset_top = 4.0
 offset_right = 531.0
 offset_bottom = 251.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1b388")
 script = ExtResource("1_sni15")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

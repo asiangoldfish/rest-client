@@ -5,11 +5,31 @@ signal request_was_selected
 
 var request_id: String = ""
 var request_name: String = "New request"
-var folder: String = ""
+var folder_id: String = ""
+var method: String = "GET"
+var url: String = "localhost"
+var request_body: String = ""
+var response_body: String = ""
+
+var request_headers: Dictionary = {}
+var response_headers: Dictionary = {}
+
+
+## Given the respective button's entry in the save file, populate its properties
+func read_from_dict(dict: Dictionary):
+    # Request id must be set by the caller
+    request_name = dict.get("name")
+    folder_id = dict.get("folder")
+    method = dict.get("method")
+    url = dict.get("url")
+    request_body = dict.get("request_body")
+    response_body = dict.get("response_body")
+    request_headers = dict.get("request_headers")
+    response_headers = dict.get("response_headers")
+
 
 func _ready() -> void:
     self.text = request_name
-    
     
 # ----------------------------------------
 # Drag and drop
@@ -36,3 +56,5 @@ func set_request_name(s: String) -> void:
 
 func _on_button_down() -> void:
     self.emit_signal("request_was_selected", self)
+
+
